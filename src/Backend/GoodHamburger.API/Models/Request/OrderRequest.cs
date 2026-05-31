@@ -1,7 +1,10 @@
-﻿namespace GoodHamburger.API.Models.Request
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace GoodHamburger.API.Models.Request
 {
     public class OrderRequest
     {
-        public int IdProduct { get; set; }
+        [Required]
+        public List<int> IdsProducts { get; set; }
     }
 }

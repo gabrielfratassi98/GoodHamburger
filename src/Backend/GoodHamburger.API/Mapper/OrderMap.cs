@@ -17,10 +17,8 @@ namespace GoodHamburger.API.Mapper
                 Id = order.Id,
                 Amount = order.Amount,
                 Discount = order.Discount,
+                DiscountPercentage = order.DiscountPercentage,
                 FinalAmount = order.FinalAmount,
-                DateCreated = order.DateCreated,
-                DateUpdated = order.DateUpdated,
-                DateInactived = order.DateInactived,
                 Active = order.Active,
                 Products = order.Products?.Select(i => i.ToResponseOrderProduct()).ToList()
             };
@@ -34,7 +32,7 @@ namespace GoodHamburger.API.Mapper
             {
                 IdProduct = item.IdProduct,
                 Name = item.ProductName,
-                Category = item.Category,
+                CategoryName = ((CategoryProduct)item.Category).ToString(),
                 UnitPrice = item.UnitPrice,
                 Quantity = item.Quantity,
                 TotalPrice = item.TotalPrice

@@ -6,20 +6,8 @@ namespace GoodHamburger.Domain.Entities
     {
         private Order() { }
 
-        public Order(Product product, bool active)
+        public Order(bool active)
         {
-            if (product == null)
-            {
-                throw new ArgumentNullException("The product cannot be null.");
-            }
-
-            _products.Add(new OrderProduct(product.Id, product.Name, product.Category, product.Price, 1));
-
-            CalculateOrderAmount();
-
-            DateCreated = DateTime.Now;
-            DateUpdated = DateTime.Now;
-
             Active = active;
         }
 
@@ -32,35 +20,43 @@ namespace GoodHamburger.Domain.Entities
         public int DiscountPercentage { get; private set; }
         public decimal Discount { get; private set; }
         public decimal FinalAmount { get; private set; }
-        public DateTime DateCreated { get; private set; }
-        public DateTime DateUpdated { get; private set; }
-        public DateTime DateInactived { get; private set; }
         public bool Active { get; set; }
 
-        public Result AddProduct(Product product)
+        public Result AddProducts(List<Product> products)
         {
-            if (product == null)
+            if (products == null || !products.Any())
             {
-                return Result.Failure("Product not found.");
+                return Result.Failure("Product list cannot be empty.");
             }
 
-            if (CheckIfCategoryExists(product))
+            if (!Active)
             {
-                return Result.Failure($"Cannot add more than one {((CategoryProduct)product.Category).ToString().ToLower()}.");
+                return Result.Failure("Cannot modify a deleted order.");
             }
 
-            var ordemProduct = new OrderProduct(product.Id, product.Name, product.Category, product.Price, 1);
-            _products.Add(ordemProduct);
-            
+            foreach (var product in products)
+            {
+                if (CheckIfCategoryExists(product))
+                {
+                    return Result.Failure($"Cannot add more than one {((CategoryProduct)product.Category).ToString().ToLower()}.");
+                }
+
+                var ordemProduct = new OrderProduct(product.Id, product.Name, product.Category, product.Price, 1);
+                _products.Add(ordemProduct);
+            }
+
             CalculateOrderAmount();
-
-            DateUpdated = DateTime.Now;
 
             return Result.Success();
         }
 
         public Result RemoveProduct(int id)
         {
+            if (!Active)
+            {
+                return Result.Failure("Cannot modify a deleted order.");
+            }
+
             var productItem = _products.FirstOrDefault(p => p.IdProduct == id);
             if (productItem == null)
             {
@@ -71,16 +67,12 @@ namespace GoodHamburger.Domain.Entities
 
             CalculateOrderAmount();
 
-            DateUpdated = DateTime.Now;
-
             return Result.Success();
         }
 
         public Result RemoveOrder()
         {
             Active = false;
-            DateUpdated = DateTime.Now;
-            DateInactived = DateTime.Now;
             return Result.Success("Order removed successfully.");
         }
 
@@ -89,11 +81,6 @@ namespace GoodHamburger.Domain.Entities
             CalculateAmount();
             ApplyDiscountRules();
             CalculateFinalAmount();
-        }
-
-        public void UpdateDateInactivedOrder()
-        {
-            DateInactived = DateTime.Now;
         }
 
         private void CalculateAmount()

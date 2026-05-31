@@ -22,5 +22,10 @@ namespace GoodHamburger.Infrastructure.Repositories
         {
             return _dbContext.Product.ToList();
         }
+
+        public IEnumerable<Product> GetByIds(List<int> ids)
+        {
+            return _dbContext.Product.Where(p => ids.Contains(p.Id)).ToList();
+        }     
     }
 }

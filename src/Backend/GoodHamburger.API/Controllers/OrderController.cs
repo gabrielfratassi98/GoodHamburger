@@ -24,13 +24,20 @@ namespace GoodHamburger.API.Controllers
         {
             try
             {
-                Result<Order> result = _orderAppService.Create(model.IdProduct);
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ApiResponse.Error("Required one or more products."));
+                }
+
+                Result<Order> result = _orderAppService.Create(model.IdsProducts);
                 if (result.IsFailure)
                 {
                     return BadRequest(ApiResponse.Error(result.Message));
                 }
 
-                return Created(string.Empty, ApiResponse.Ok("Order created successfully.", result.Value));
+                OrderResponse response = OrderMap.ToResponseOrder(result.Value);
+
+                return Created(string.Empty, ApiResponse.Ok("Order created successfully.", response));
             }
             catch
             {
@@ -76,18 +83,25 @@ namespace GoodHamburger.API.Controllers
             }
         }
 
-        [HttpPost("{id:long}/product")]
+        [HttpPost("{id:long}/products")]
         public ActionResult AddProduct(long id, [FromBody] OrderRequest model)
         {
             try
             {
-                Result<Order> result = _orderAppService.AddProduct(id, model.IdProduct);
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ApiResponse.Error("Required one or more products."));
+                }
+
+                Result<Order> result = _orderAppService.AddProducts(id, model.IdsProducts);
                 if (result.IsFailure)
                 {
                     return BadRequest(ApiResponse.Error(result.Message));
                 }
 
-                return Ok(ApiResponse.Ok("Product added successfully.", result.Value));
+                OrderResponse response = OrderMap.ToResponseOrder(result.Value);
+
+                return Ok(ApiResponse.Ok("Product added successfully.", response));
             }
             catch
             {
@@ -106,7 +120,9 @@ namespace GoodHamburger.API.Controllers
                     return BadRequest(ApiResponse.Error(result.Message));
                 }
 
-                return Ok(ApiResponse.Ok("Product removed successfully.", result.Value));
+                OrderResponse response = OrderMap.ToResponseOrder(result.Value);
+
+                return Ok(ApiResponse.Ok("Product removed successfully.", response));
             }
             catch
             {
