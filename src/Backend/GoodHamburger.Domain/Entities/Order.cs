@@ -8,14 +8,22 @@ namespace GoodHamburger.Domain.Entities
 
         public Order(Product product, bool active)
         {
+            if (product == null)
+            {
+                throw new ArgumentNullException("The product cannot be null.");
+            }
+
             _products.Add(new OrderProduct(product.Id, product.Name, product.Category, product.Price, 1));
+
+            CalculateOrderAmount();
+
             DateCreated = DateTime.Now;
             DateUpdated = DateTime.Now;
+
             Active = active;
         }
 
         public long Id { get; set; }
-
 
         private readonly List<OrderProduct> _products = new();
         public IReadOnlyCollection<OrderProduct> Products => _products.AsReadOnly();
@@ -43,32 +51,44 @@ namespace GoodHamburger.Domain.Entities
 
             var ordemProduct = new OrderProduct(product.Id, product.Name, product.Category, product.Price, 1);
             _products.Add(ordemProduct);
+            
+            CalculateOrderAmount();
+
+            DateUpdated = DateTime.Now;
 
             return Result.Success();
         }
 
         public Result RemoveProduct(int id)
         {
-            var product = _products.FirstOrDefault(p => p.IdProduct == id);
-            if (product == null)
+            var productItem = _products.FirstOrDefault(p => p.IdProduct == id);
+            if (productItem == null)
             {
                 return Result.Failure("Product not found.");
             }
 
-            _products.Remove(product);
+            _products.Remove(productItem);
+
+            CalculateOrderAmount();
+
+            DateUpdated = DateTime.Now;
+
             return Result.Success();
         }
 
-        public void CalculateOrderAmount(decimal discount)
+        public Result RemoveOrder()
         {
-            CalculateAmount();
-            Discount = discount;
-            CalculateFinalAmount();
+            Active = false;
+            DateUpdated = DateTime.Now;
+            DateInactived = DateTime.Now;
+            return Result.Success("Order removed successfully.");
         }
 
-        public void UpdateDateOrder()
+        public void CalculateOrderAmount()
         {
-            DateUpdated = DateTime.Now;
+            CalculateAmount();
+            ApplyDiscountRules();
+            CalculateFinalAmount();
         }
 
         public void UpdateDateInactivedOrder()
@@ -76,25 +96,50 @@ namespace GoodHamburger.Domain.Entities
             DateInactived = DateTime.Now;
         }
 
-        public void ApplyDiscountPercentage(int percentage)
-        {
-            DiscountPercentage = percentage;
-        }
-
         private void CalculateAmount()
         {
-            Amount = _products.Sum(c => c.TotalPrice);
+            Amount = Math.Round(_products.Sum(c => c.TotalPrice), 2);
+        }
+
+        private void ApplyDiscountRules()
+        {
+            bool hasSandwich = _products.Any(c => c.Category == (int)CategoryProduct.Sandwich);
+            bool hasFries = _products.Any(c => c.Category == (int)CategoryProduct.Fries);
+            bool hasSoda = _products.Any(c => c.Category == (int)CategoryProduct.Soda);
+
+            if (hasSandwich && hasFries && hasSoda)
+            {
+                DiscountPercentage = 20;
+                Discount = Math.Round(Amount * 0.20m, 2);
+                return;
+            }
+
+            if (hasSandwich && hasSoda)
+            {
+                DiscountPercentage = 15;
+                Discount = Math.Round(Amount * 0.15m, 2);
+                return;
+            }
+
+            if (hasSandwich && hasFries)
+            {
+                DiscountPercentage = 10;
+                Discount = Math.Round(Amount * 0.10m, 2);
+                return;
+            }
+
+            DiscountPercentage = 0;
+            Discount = 0m;
         }
 
         private void CalculateFinalAmount()
         {
-            FinalAmount = Amount - Discount;
+            FinalAmount = Math.Round(Amount - Discount, 2);
         }
 
         private bool CheckIfCategoryExists(Product product)
         {
             return _products.Any(c => c.Category == product.Category);
         }
-
     }
 }

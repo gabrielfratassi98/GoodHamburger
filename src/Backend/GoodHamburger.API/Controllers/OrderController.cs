@@ -3,7 +3,6 @@ using GoodHamburger.API.Models.Request;
 using GoodHamburger.API.Models.Response;
 using GoodHamburger.Application.Interfaces;
 using GoodHamburger.Domain.Entities;
-using GoodHamburger.Domain.Services;
 using GoodHamburger.Domain.Shared;
 using Microsoft.AspNetCore.Mvc;
 
