@@ -11,6 +11,8 @@ namespace GoodHamburger.API.Configurations
         {
             services.AddScoped<IMenuAppService, MenuAppService>();
 
+            services.AddScoped<IProductAppService, ProductAppService>();
+
             services.AddScoped<IOrderAppService, OrderAppService>();
             services.AddScoped<IOrderRepository, OrderRepository>();
 

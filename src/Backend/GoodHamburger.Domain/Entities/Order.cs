@@ -50,7 +50,7 @@ namespace GoodHamburger.Domain.Entities
             return Result.Success();
         }
 
-        public Result RemoveProduct(int id)
+        public Result DeleteProduct(int id)
         {
             if (!Active)
             {
@@ -70,7 +70,7 @@ namespace GoodHamburger.Domain.Entities
             return Result.Success();
         }
 
-        public Result RemoveOrder()
+        public Result DeleteOrder()
         {
             Active = false;
             return Result.Success("Order removed successfully.");

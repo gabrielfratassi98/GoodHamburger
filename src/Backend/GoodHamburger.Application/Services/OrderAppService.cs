@@ -74,7 +74,7 @@ namespace GoodHamburger.Application.Services
             return Result<Order>.Success(order);
         }
 
-        public Result<Order> RemoveProduct(long id, int idProduct)
+        public Result<Order> DeleteProduct(long id, int idProduct)
         {
             var order = GetById(id);
             if (order is null)
@@ -82,7 +82,7 @@ namespace GoodHamburger.Application.Services
                 return Result<Order>.Failure("Order not found.");
             }
 
-            Result result = order.RemoveProduct(idProduct);
+            Result result = order.DeleteProduct(idProduct);
             if (result.IsFailure)
             {
                 return Result<Order>.Failure(result.Message);
@@ -93,7 +93,7 @@ namespace GoodHamburger.Application.Services
             return Result<Order>.Success(order);
         }
 
-        public Result RemoveOrder(long id)
+        public Result DeleteOrder(long id)
         {
             var order = GetById(id);
             if (order is null)
@@ -101,7 +101,7 @@ namespace GoodHamburger.Application.Services
                 return Result.Failure("Order not found.");
             }
 
-            order.RemoveOrder();
+            order.DeleteOrder();
 
             Update(order);
 

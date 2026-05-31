@@ -7,7 +7,7 @@ namespace GoodHamburger.Application.Interfaces
     {
         Result<Order> Create(List<int> idsProducts);
         Result<Order> AddProducts(long id, List<int> idsProducts);
-        Result<Order> RemoveProduct(long id, int idProduct);
-        Result RemoveOrder(long id);    
+        Result<Order> DeleteProduct(long id, int idProduct);
+        Result DeleteOrder(long id);    
     }
 }

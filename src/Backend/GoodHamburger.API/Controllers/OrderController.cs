@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace GoodHamburger.API.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("orders")]
     public class OrderController : ControllerBase
     {
         private readonly IOrderAppService _orderAppService;
@@ -109,12 +109,12 @@ namespace GoodHamburger.API.Controllers
             }
         }
 
-        [HttpDelete("{id:long}/product/{idProduct:int}")]
-        public ActionResult RemoveProduct(long id, int idProduct)
+        [HttpDelete("{id:long}/products/{idProduct:int}")]
+        public ActionResult DeleteProduct(long id, int idProduct)
         {
             try
             {
-                Result<Order> result = _orderAppService.RemoveProduct(id, idProduct);
+                Result<Order> result = _orderAppService.DeleteProduct(id, idProduct);
                 if (result.IsFailure)
                 {
                     return BadRequest(ApiResponse.Error(result.Message));
@@ -122,20 +122,20 @@ namespace GoodHamburger.API.Controllers
 
                 OrderResponse response = OrderMap.ToResponseOrder(result.Value);
 
-                return Ok(ApiResponse.Ok("Product removed successfully.", response));
+                return Ok(ApiResponse.Ok("Product deleted successfully.", response));
             }
             catch
             {
-                return BadRequest(ApiResponse.Error("An error occurred while removing the product from the order."));
+                return BadRequest(ApiResponse.Error("An error occurred while deleting the product from the order."));
             }
         }
 
         [HttpDelete("{id:long}")]
-        public ActionResult Remove(long id)
+        public ActionResult Delete(long id)
         {
             try
             {
-                Result result = _orderAppService.RemoveOrder(id);
+                Result result = _orderAppService.DeleteOrder(id);
                 if (result.IsFailure)
                 {
                     return BadRequest(ApiResponse.Error(result.Message));

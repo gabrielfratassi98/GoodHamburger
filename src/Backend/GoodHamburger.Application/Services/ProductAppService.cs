@@ -1,0 +1,21 @@
+﻿using GoodHamburger.Application.Interfaces;
+using GoodHamburger.Domain.Entities;
+using GoodHamburger.Domain.Interfaces.Repositories;
+
+namespace GoodHamburger.Application.Services
+{
+    public class ProductAppService : IProductAppService
+    {
+        private readonly IProductRepository _productRepository;
+
+        public ProductAppService(IProductRepository productRepository)
+        {
+            _productRepository = productRepository;
+        }
+
+        public IEnumerable<Product> GetProductsByCategory(int category)
+        {
+            return _productRepository.GetProductsByCategory(category);
+        }
+    }
+}
