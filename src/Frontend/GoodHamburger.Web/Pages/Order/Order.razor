@@ -95,7 +95,7 @@
 
     async Task Checkout()
     {
-        if (orderId == 0)
+        if (orderId == 0 || order.Products.Count == 0)
         {
             return;
         }
