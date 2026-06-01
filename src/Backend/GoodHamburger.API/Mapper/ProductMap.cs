@@ -17,6 +17,9 @@ namespace GoodHamburger.API.Mapper
                 Id = product.Id,
                 Name = product.Name,
                 Price = product.Price,
+                Description = product.Description,
+                ImageUrl = product.ImageUrl,
+                Category = product.Category,
                 CategoryName = ((CategoryProduct)product.Category).ToString()
             };
         }

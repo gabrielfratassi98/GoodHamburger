@@ -1,0 +1,64 @@
+﻿@page "/menu"
+@using Radzen
+@using Radzen.Blazor
+@inject IMenuService _menuService
+
+<PageTitle>Menu</PageTitle>
+
+<RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center" class="rz-mb-6">
+    <RadzenSelectBar @bind-Value="@categoriaSelecionada" TValue="string" Size="ButtonSize.Medium">
+        <Items>
+            <RadzenSelectBarItem Text="All" Value="@("All")" />
+            <RadzenSelectBarItem Text="Sandwiches" Value="@("Sandwiches")" />
+            <RadzenSelectBarItem Text="Extras" Value="@("Extras")" />
+        </Items>
+    </RadzenSelectBar>
+</RadzenStack>
+
+<RadzenRow Gap="1rem" class="rz-p-4">
+    @foreach (var product in ProdutosFiltrados)
+    {
+        <RadzenColumn Size="12" SizeMD="6" SizeLG="4" SizeXL="3">
+            <RadzenCard Style="height: 100%; display: flex; flex-direction: column; justify-content: space-between; padding: 1rem;">
+
+                <RadzenStack AlignItems="AlignItems.Center" Gap="0.5rem">
+                    <RadzenImage Path="@product.ImageUrl" Style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover;" />
+                    <RadzenText TextStyle="TextStyle.H6" class="rz-text-center">@product.Name</RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body2" class="rz-color-gray-600 rz-text-center" Style="height: 60px;">
+                        @product.Description
+                    </RadzenText>
+                </RadzenStack>
+
+                <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween" AlignItems="AlignItems.Center" class="rz-mt-4">
+                    <RadzenText TextStyle="TextStyle.H6" class="rz-m-0">
+                        $@product.Price.ToString("F2", System.Globalization.CultureInfo.InvariantCulture)
+                    </RadzenText>
+                    <RadzenButton Text="Buy" Icon="add_shopping_cart" ButtonStyle="ButtonStyle.Primary" Click="@(() => AddProductOrder(product))" />
+                </RadzenStack>
+            </RadzenCard>
+        </RadzenColumn>
+    }
+</RadzenRow>
+
+@code {
+    string categoriaSelecionada = "All";
+
+    List<Product> allProducts = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var menuModel = await _menuService.GetMenu();
+        allProducts = menuModel.Sandwiches.Concat(menuModel.Extras).ToList();
+    }
+
+    IEnumerable<Product> ProdutosFiltrados => categoriaSelecionada == "All"
+    ? allProducts
+    : allProducts.Where(p =>
+        (categoriaSelecionada == "Sandwiches" && p.Category == 1) ||
+        (categoriaSelecionada == "Extras" && (p.Category == 2 || p.Category == 3)));
+
+    void AddProductOrder(Product product)
+    {
+
+    }
+}

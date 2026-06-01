@@ -1,6 +1,6 @@
-﻿namespace GoodHamburger.API.Models.Response
+﻿namespace GoodHamburger.Web.Models
 {
-    public class ProductResponse
+    public class Product
     {
         public int Id { get; set; }
         public string Name { get; set; }

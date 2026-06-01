@@ -7,6 +7,6 @@
     <Project Path="src/Backend/GoodHamburger.Infrastructure/GoodHamburger.Infrastructure.csproj" />
   </Folder>
   <Folder Name="/src/Frontend/">
-    <Project Path="src/Frontend/GoodHamburger.Web/GoodHamburger.Web.csproj" />
+    <Project Path="src/Frontend/GoodHamburger.Web/GoodHamburger.Web.csproj" Id="68f21951-eaa8-49a2-a241-da68c988627f" />
   </Folder>
 </Solution>

@@ -4,16 +4,20 @@
     {
         private Product() { }
 
-        public Product(string name, decimal price, CategoryProduct category)
+        public Product(string name, decimal price, string description, string img, CategoryProduct category)
         {
             Name = name;
             Price = price;
             Category = (int)category;
+            Description = description;
+            ImageUrl = img;
             SetSide();
         }
 
         public string Name { get; private set; } = string.Empty;
         public decimal Price { get; private set; } = decimal.Zero;
+        public string Description { get; private set; }
+        public string ImageUrl { get; private set; }
         public int Category { get; private set; }
         public bool Extra { get; private set; }
 

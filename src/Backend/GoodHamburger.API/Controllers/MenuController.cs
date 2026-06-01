@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace GoodHamburger.API.Controllers
 {
     [ApiController]
-    [Route("menus")]
+    [Route("api/menus")]
     public class MenuController : ControllerBase
     {
         private readonly IMenuAppService _menuAppService;

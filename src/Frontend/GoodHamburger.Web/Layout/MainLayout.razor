@@ -1,16 +1,29 @@
 ﻿@inherits LayoutComponentBase
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
-
-    <main>
-        <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
-        </div>
-
-        <article class="content px-4">
+<RadzenLayout>
+    <RadzenHeader>
+        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0">
+            <RadzenSidebarToggle Click="@(() => leftSidebarExpanded = !leftSidebarExpanded)" />
+            <RadzenLabel Text="Good Hamburger" />
+        </RadzenStack>
+    </RadzenHeader>
+    <RadzenSidebar Position="SidebarPosition.Left" @bind-Expanded="@leftSidebarExpanded" Style="width: 250px;">
+        <RadzenPanelMenu>
+            <RadzenPanelMenuItem Text="Menu" Path="/menu"/>
+            <RadzenPanelMenuItem Text="Order" Path="/counter" />
+        </RadzenPanelMenu>
+    </RadzenSidebar>
+    <RadzenBody>
+        <div class="rz-p-4">
             @Body
-        </article>
-    </main>
-</div>
+        </div>
+    </RadzenBody>
+    <RadzenSidebar Position="SidebarPosition.Right" Style="width: 250px;">
+        <div class="rz-p-4">
+            Right Sidebar
+        </div>
+    </RadzenSidebar>
+</RadzenLayout>
+
+@code {
+    bool leftSidebarExpanded = true;
+}
