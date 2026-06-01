@@ -39,7 +39,7 @@
                     {
                         <RadzenButton Icon="delete"
                                       ButtonStyle="ButtonStyle.Danger"
-                                      Click="@(() => RemoveProduct(product.Id))"
+                                      Click="@(() => DeleteProduct(product.Id))"
                                       Text="Delete" />
                     }
                     else
@@ -55,7 +55,7 @@
     }
 </RadzenRow>
 
-    @code {
+@code {
     long orderId = 0;
     string categoriaSelecionada = "All";
 
@@ -71,7 +71,7 @@
         var menuModel = await _menuService.GetMenu();
         var orders = await _orderService.GetAllOrders();
         var order = orders?.Data?.FirstOrDefault(o => o.Active) ?? new OrderModel();
-            
+
         orderId = order?.Id ?? 0;
 
         allProducts = menuModel.Data.Sandwiches.Concat(menuModel.Data.Extras).ToList();
@@ -112,20 +112,19 @@
         MsgService.ShowMessage(response.Message);
     }
 
-    async Task RemoveProduct(int idProduct)
+    async Task DeleteProduct(int idProduct)
     {
         var response = await _orderService.DeleteProductOrder(idProduct, orderId);
 
-        if (response != null && response.Success)
+        if (!response.Success)
         {
-            var product = allProducts?.FirstOrDefault(p => p.Id == idProduct);
-            if (product != null) product.IsInOrder = false;
+            MsgService.ShowMessage(response.Message, isError: true);
+            return;
+        }
 
-            MsgService.ShowMessage("Product removed successfully!");
-        }
-        else
-        {
-            MsgService.ShowMessage(response?.Message ?? "Error removing product", isError: true);
-        }
+        var product = allProducts?.FirstOrDefault(p => p.Id == idProduct);
+        if (product != null) product.IsInOrder = false;
+
+        MsgService.ShowMessage(response.Message);
     }
 }

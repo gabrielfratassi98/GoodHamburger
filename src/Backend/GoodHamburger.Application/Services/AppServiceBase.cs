@@ -32,9 +32,9 @@ namespace GoodHamburger.Application.Services
             _repository.Update(entity);
         }
 
-        public virtual void Remove(TEntity entity)
+        public virtual void Delete(TEntity entity)
         {
-            _repository.Remove(entity);
+            _repository.Delete(entity);
         }
     }
 }

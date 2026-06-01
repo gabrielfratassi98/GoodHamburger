@@ -24,7 +24,7 @@ namespace GoodHamburger.Infrastructure.Repositories
             throw new NotImplementedException();
         }
 
-        public virtual void Remove(TEntity entity)
+        public virtual void Delete(TEntity entity)
         {
             throw new NotImplementedException();
         }

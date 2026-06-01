@@ -37,7 +37,7 @@
 
                         <RadzenDataGridColumn TItem="OrderProduct" Width="60px">
                             <Template Context="item">
-                                <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Danger" Click="() => RemoveItem(item.IdProduct)" />
+                                <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Danger" Click="() => DeleteItem(item.IdProduct)" />
                             </Template>
                         </RadzenDataGridColumn>
                     </Columns>
@@ -80,7 +80,7 @@
         orderId = order.Id;
     }
 
-    async Task RemoveItem(int idProduct)
+    async Task DeleteItem(int idProduct)
     {
         var result = await _orderService.DeleteProductOrder(idProduct, orderId);
         if (!result.Success)

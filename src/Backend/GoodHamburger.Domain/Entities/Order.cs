@@ -73,7 +73,7 @@ namespace GoodHamburger.Domain.Entities
         public Result DeleteOrder()
         {
             Active = false;
-            return Result.Success("Order removed successfully.");
+            return Result.Success("Order deleted successfully.");
         }
 
         public void CalculateOrderAmount()

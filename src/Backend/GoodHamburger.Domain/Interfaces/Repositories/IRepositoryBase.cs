@@ -6,6 +6,6 @@
         IEnumerable<TEntity> GetAll();
         TEntity GetById(long id);
         void Update(TEntity obj);
-        void Remove(TEntity obj);
+        void Delete(TEntity obj);
     }
 }
