@@ -96,6 +96,11 @@ namespace GoodHamburger.API.Controllers
                 Result<Order> result = _orderAppService.AddProducts(id, model.IdsProducts);
                 if (result.IsFailure)
                 {
+                    if (result.Message.Equals("Order not found."))
+                    {
+                        return NotFound(ApiResponse<OrderResponse>.Error(result.Message));
+                    }
+
                     return BadRequest(ApiResponse<OrderResponse>.Error(result.Message));
                 }
 
@@ -117,6 +122,11 @@ namespace GoodHamburger.API.Controllers
                 Result<Order> result = _orderAppService.DeleteProduct(id, idProduct);
                 if (result.IsFailure)
                 {
+                    if (result.Message.Equals("Order not found."))
+                    {
+                        return NotFound(ApiResponse<OrderResponse>.Error(result.Message));
+                    }
+
                     return BadRequest(ApiResponse<OrderResponse>.Error(result.Message));
                 }
 
@@ -126,7 +136,7 @@ namespace GoodHamburger.API.Controllers
             }
             catch
             {
-                return BadRequest(ApiResponse<OrderResponse>.Error("An error occurred while deleting the product from the order."));
+                return StatusCode(500, ApiResponse<OrderResponse>.Error("An error occurred while deleting the product from the order."));
             }
         }
 
@@ -138,6 +148,11 @@ namespace GoodHamburger.API.Controllers
                 Result result = _orderAppService.DeleteOrder(id);
                 if (result.IsFailure)
                 {
+                    if (result.Message.Equals("Order not found."))
+                    {
+                        return NotFound(ApiResponse<OrderResponse>.Error(result.Message));
+                    }
+
                     return BadRequest(ApiResponse<OrderResponse>.Error(result.Message));
                 }
 
@@ -145,7 +160,7 @@ namespace GoodHamburger.API.Controllers
             }
             catch
             {
-                return BadRequest(ApiResponse<OrderResponse>.Error("An error occurred while deleting the order."));
+                return StatusCode(500, ApiResponse<OrderResponse>.Error("An error occurred while deleting the order."));
             }
         }
     }

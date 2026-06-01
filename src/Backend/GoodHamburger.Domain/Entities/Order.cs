@@ -121,7 +121,7 @@ namespace GoodHamburger.Domain.Entities
 
         private void CalculateFinalAmount()
         {
-            FinalAmount = Math.Round(Amount - Discount, 2);
+            FinalAmount = Amount - Discount;
         }
 
         private bool CheckIfCategoryExists(Product product)
