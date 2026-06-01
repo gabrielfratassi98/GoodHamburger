@@ -24,14 +24,14 @@ namespace GoodHamburger.API.Controllers
         {
             try
             {
-                IEnumerable<Menu> menus = new List<Menu> { _menuAppService.GetMenu() };
-                List<MenuResponse> response = menus.ToResponseMenuList();
+                Menu menu = _menuAppService.GetMenu();
+                MenuResponse response = menu.ToResponseMenu();
 
-                return Ok(ApiResponse.Ok("Menu retrieved successfully.", response));
+                return Ok(ApiResponse<MenuResponse>.Ok("Menu retrieved successfully.", response));
             }
             catch
             {
-                return StatusCode(500, ApiResponse.Error("An error occurred while retrieving menus."));
+                return StatusCode(500, ApiResponse<MenuResponse>.Error("An error occurred while retrieving menus."));
             }
         }
 
@@ -42,11 +42,11 @@ namespace GoodHamburger.API.Controllers
             {
                 IEnumerable<ProductResponse> response = GetProductsByCategory((int)CategoryProduct.Sandwich);
 
-                return Ok(ApiResponse.Ok("Sandwiches retrieved successfully.", response));
+                return Ok(ApiResponse<IEnumerable<ProductResponse>>.Ok("Sandwiches retrieved successfully.", response));
             }
             catch
             {
-                return StatusCode(500, ApiResponse.Error("An error occurred while retrieving sandwiches."));
+                return StatusCode(500, ApiResponse<IEnumerable<ProductResponse>>.Error("An error occurred while retrieving sandwiches."));
             }
         }
 
@@ -57,11 +57,11 @@ namespace GoodHamburger.API.Controllers
             {
                 IEnumerable<ProductResponse> response = GetProductsByCategory((int)CategoryProduct.Fries);
 
-                return Ok(ApiResponse.Ok("Fries retrieved successfully.", response));
+                return Ok(ApiResponse<IEnumerable<ProductResponse>>.Ok("Fries retrieved successfully.", response));
             }
             catch
             {
-                return StatusCode(500, ApiResponse.Error("An error occurred while retrieving extras."));
+                return StatusCode(500, ApiResponse<IEnumerable<ProductResponse>>.Error("An error occurred while retrieving extras."));
             }
         }
 
@@ -72,11 +72,11 @@ namespace GoodHamburger.API.Controllers
             {
                 IEnumerable<ProductResponse> response = GetProductsByCategory((int)CategoryProduct.Soda);
 
-                return Ok(ApiResponse.Ok("Sodas retrieved successfully.", response));
+                return Ok(ApiResponse<IEnumerable<ProductResponse>>.Ok("Sodas retrieved successfully.", response));
             }
             catch
             {
-                return StatusCode(500, ApiResponse.Error("An error occurred while retrieving sodas."));
+                return StatusCode(500, ApiResponse<IEnumerable<ProductResponse>>.Error("An error occurred while retrieving sodas."));
             }
         }
 

@@ -1,6 +1,4 @@
 ﻿using GoodHamburger.Web.Services;
-using Microsoft.Extensions.DependencyInjection; 
-using Microsoft.Extensions.Http;
 
 namespace GoodHamburger.Web.Configurations
 {
@@ -8,9 +6,16 @@ namespace GoodHamburger.Web.Configurations
     {
         public static void HttpExtensions(this IServiceCollection services)
         {
+            string baseUri = ApiConfig.BaseUrl;
+
             services.AddHttpClient<IMenuService, MenuService>(client =>
             {
-                client.BaseAddress = new Uri(ApiConfig.BaseUrl);
+                client.BaseAddress = new Uri(baseUri);
+            });
+
+            services.AddHttpClient<IOrderService, OrderService>(client =>
+            {
+                client.BaseAddress = new Uri(baseUri);
             });
         }
     }

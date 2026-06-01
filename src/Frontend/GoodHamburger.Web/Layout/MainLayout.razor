@@ -1,4 +1,7 @@
 ﻿@inherits LayoutComponentBase
+@inject MessageService MsgService
+@implements IDisposable
+
 <RadzenLayout>
     <RadzenHeader>
         <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0">
@@ -6,24 +9,42 @@
             <RadzenLabel Text="Good Hamburger" />
         </RadzenStack>
     </RadzenHeader>
+
     <RadzenSidebar Position="SidebarPosition.Left" @bind-Expanded="@leftSidebarExpanded" Style="width: 250px;">
         <RadzenPanelMenu>
-            <RadzenPanelMenuItem Text="Menu" Path="/menu"/>
-            <RadzenPanelMenuItem Text="Order" Path="/counter" />
+            <RadzenPanelMenuItem Text="Menu" Path="/menu" />
+            <RadzenPanelMenuItem Text="Order" Path="/order" />
         </RadzenPanelMenu>
     </RadzenSidebar>
+
     <RadzenBody>
         <div class="rz-p-4">
             @Body
         </div>
     </RadzenBody>
-    <RadzenSidebar Position="SidebarPosition.Right" Style="width: 250px;">
-        <div class="rz-p-4">
-            Right Sidebar
+
+    @if (MsgService.Show)
+    {
+        <div style="position: fixed;
+            top: 30px;
+            right: 20px;
+            z-index: 99999;
+            min-width: 300px;
+            background-color: @(MsgService.IsError ? "#ffcccc" : "#ccffcc");
+            color: @(MsgService.IsError ? "red" : "green");
+            padding: 1rem;
+            text-align: center;
+            border: 1px solid @(MsgService.IsError ? "red" : "green");
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+            @MsgService.Message
         </div>
-    </RadzenSidebar>
+    }
+
 </RadzenLayout>
 
 @code {
     bool leftSidebarExpanded = true;
+    protected override void OnInitialized() => MsgService.OnChange += StateHasChanged;
+    public void Dispose() => MsgService.OnChange -= StateHasChanged;
 }

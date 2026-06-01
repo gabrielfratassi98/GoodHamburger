@@ -1,0 +1,113 @@
+﻿@page "/order"
+@using Radzen
+@using Radzen.Blazor
+@inject MessageService MsgService
+@inject IOrderService _orderService
+
+<PageTitle>Your Order</PageTitle>
+
+<RadzenRow Gap="1rem">
+    <RadzenColumn Size="12" SizeMD="8">
+        <RadzenCard>
+            <RadzenText TextStyle="TextStyle.H6">Order Products</RadzenText>
+
+            @if (order.Products == null || !order.Products.Any())
+            {
+                <p>No products in the order.</p>
+            }
+            else
+            {
+                <RadzenDataGrid Data="@order.Products" TItem="OrderProduct" AllowSorting="true">
+                    <Columns>
+                        <RadzenDataGridColumn TItem="OrderProduct" Title="Product" Property="Name" />
+
+                        <RadzenDataGridColumn TItem="OrderProduct" Title="Price">
+                            <Template Context="item">
+                                @item.UnitPrice.ToString("F2", System.Globalization.CultureInfo.InvariantCulture)
+                            </Template>
+                        </RadzenDataGridColumn>
+
+                        <RadzenDataGridColumn TItem="OrderProduct" Title="Quantity" Property="Quantity" Width="80px" />
+
+                        <RadzenDataGridColumn TItem="OrderProduct" Title="Total">
+                            <Template Context="item">
+                                @item.TotalPrice.ToString("F2", System.Globalization.CultureInfo.InvariantCulture)
+                            </Template>
+                        </RadzenDataGridColumn>
+
+                        <RadzenDataGridColumn TItem="OrderProduct" Width="60px">
+                            <Template Context="item">
+                                <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Danger" Click="() => RemoveItem(item.IdProduct)" />
+                            </Template>
+                        </RadzenDataGridColumn>
+                    </Columns>
+                </RadzenDataGrid>
+            }
+        </RadzenCard>
+    </RadzenColumn>
+
+    <RadzenColumn Size="12" SizeMD="4">
+        <RadzenCard>
+            <RadzenText TextStyle="TextStyle.H6">Order Summary</RadzenText>
+            <RadzenStack Gap="0.5rem">
+                <RadzenRow JustifyContent="JustifyContent.SpaceBetween">
+                    <RadzenText>Subtotal:</RadzenText>
+                    <RadzenText>@order.Amount.ToString("F2", System.Globalization.CultureInfo.InvariantCulture)</RadzenText>
+                </RadzenRow>
+                <RadzenRow JustifyContent="JustifyContent.SpaceBetween">
+                    <RadzenText>Discount (@order.DiscountPercentage%):</RadzenText>
+                    <RadzenText class="rz-color-danger">- @order.Discount.ToString("F2", System.Globalization.CultureInfo.InvariantCulture)</RadzenText>
+                </RadzenRow>
+                <RadzenRow JustifyContent="JustifyContent.SpaceBetween">
+                    <RadzenText TextStyle="TextStyle.H6">Total:</RadzenText>
+                    <RadzenText TextStyle="TextStyle.H6">@order.FinalAmount.ToString("F2", System.Globalization.CultureInfo.InvariantCulture)</RadzenText>
+                </RadzenRow>
+            </RadzenStack>
+            <hr />
+            <RadzenButton Text="Checkout" ButtonStyle="ButtonStyle.Success" Size="ButtonSize.Large" Click="() => Checkout()" Class="rz-w-100" />
+        </RadzenCard>
+    </RadzenColumn>
+</RadzenRow>
+
+@code {
+    long orderId = 0;
+    OrderModel order = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await _orderService.GetAllOrders();
+        order = result?.Data?.FirstOrDefault(o => o.Active) ?? new OrderModel { Products = new List<OrderProduct>() };
+        orderId = order.Id;
+    }
+
+    async Task RemoveItem(int idProduct)
+    {
+        var result = await _orderService.DeleteProductOrder(idProduct, orderId);
+        if (!result.Success)
+        {
+            MsgService.ShowMessage(result.Message, isError: true);
+            return;
+        }
+
+        order = result.Data;
+        MsgService.ShowMessage(result.Message);
+    }
+
+    async Task Checkout()
+    {
+        if (orderId == 0)
+        {
+            return;
+        }
+
+        var result = await _orderService.FinishOrder(orderId);
+        if (!result.Success)
+        {
+            MsgService.ShowMessage(result.Message, isError: true);
+            return;
+        }
+
+        order = new();
+        MsgService.ShowMessage("Checkout.");
+    }
+}

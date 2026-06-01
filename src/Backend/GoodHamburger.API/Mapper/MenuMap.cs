@@ -19,15 +19,5 @@ namespace GoodHamburger.API.Mapper
                 Extras = menu.Extras?.ToResponseProductList()
             };
         }
-
-        public static List<MenuResponse> ToResponseMenuList(this IEnumerable<Menu> menus)
-        {
-            if (menus == null || !menus.Any())
-            {
-                return new List<MenuResponse>();
-            }
-
-            return menus.Select(m => m.ToResponseMenu()).ToList();
-        }
     }
 }

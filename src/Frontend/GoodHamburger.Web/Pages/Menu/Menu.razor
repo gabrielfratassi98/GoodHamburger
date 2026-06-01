@@ -1,7 +1,9 @@
 ﻿@page "/menu"
 @using Radzen
 @using Radzen.Blazor
+@inject MessageService MsgService
 @inject IMenuService _menuService
+@inject IOrderService _orderService
 
 <PageTitle>Menu</PageTitle>
 
@@ -16,7 +18,7 @@
 </RadzenStack>
 
 <RadzenRow Gap="1rem" class="rz-p-4">
-    @foreach (var product in ProdutosFiltrados)
+    @foreach (var product in filteredProducts)
     {
         <RadzenColumn Size="12" SizeMD="6" SizeLG="4" SizeXL="3">
             <RadzenCard Style="height: 100%; display: flex; flex-direction: column; justify-content: space-between; padding: 1rem;">
@@ -33,32 +35,97 @@
                     <RadzenText TextStyle="TextStyle.H6" class="rz-m-0">
                         $@product.Price.ToString("F2", System.Globalization.CultureInfo.InvariantCulture)
                     </RadzenText>
-                    <RadzenButton Text="Buy" Icon="add_shopping_cart" ButtonStyle="ButtonStyle.Primary" Click="@(() => AddProductOrder(product))" />
+                    @if (product.IsInOrder)
+                    {
+                        <RadzenButton Icon="delete"
+                                      ButtonStyle="ButtonStyle.Danger"
+                                      Click="@(() => RemoveProduct(product.Id))"
+                                      Text="Remove Order" />
+                    }
+                    else
+                    {
+                        <RadzenButton Icon="add_shopping_cart"
+                                      ButtonStyle="ButtonStyle.Primary"
+                                      Click="@(() => Buy(product.Id))"
+                                      Text="Buy" />
+                    }
                 </RadzenStack>
             </RadzenCard>
         </RadzenColumn>
     }
 </RadzenRow>
 
-@code {
+    @code {
+    long orderId = 0;
     string categoriaSelecionada = "All";
 
     List<Product> allProducts = new();
 
     protected override async Task OnInitializedAsync()
     {
-        var menuModel = await _menuService.GetMenu();
-        allProducts = menuModel.Sandwiches.Concat(menuModel.Extras).ToList();
+        await InitMenu();
     }
 
-    IEnumerable<Product> ProdutosFiltrados => categoriaSelecionada == "All"
+    async Task InitMenu()
+    {
+        var menuModel = await _menuService.GetMenu();
+        var orders = await _orderService.GetAllOrders();
+        var order = orders?.Data?.FirstOrDefault(o => o.Active) ?? new OrderModel();
+            
+        orderId = order?.Id ?? 0;
+
+        allProducts = menuModel.Data.Sandwiches.Concat(menuModel.Data.Extras).ToList();
+
+        if (order?.Products != null)
+        {
+            foreach (var product in allProducts)
+            {
+                product.IsInOrder = order.Products.Any(p => p.IdProduct == product.Id);
+            }
+        }
+    }
+
+    IEnumerable<Product> filteredProducts => categoriaSelecionada == "All"
     ? allProducts
     : allProducts.Where(p =>
         (categoriaSelecionada == "Sandwiches" && p.Category == 1) ||
         (categoriaSelecionada == "Extras" && (p.Category == 2 || p.Category == 3)));
 
-    void AddProductOrder(Product product)
+    async Task Buy(int idProduct)
     {
+        var response = await _orderService.AddProductOrder(idProduct, orderId);
 
+        if (response == null || !response.Success)
+        {
+            MsgService.ShowMessage(response.Message, isError: true);
+            return;
+        }
+
+        var order = response.Data;
+
+        if (order != null)
+        {
+            orderId = order.Id;
+        }
+
+        allProducts?.FirstOrDefault(p => p.Id == idProduct)?.IsInOrder = true;
+        MsgService.ShowMessage(response.Message);
+    }
+
+    async Task RemoveProduct(int idProduct)
+    {
+        var response = await _orderService.DeleteProductOrder(idProduct, orderId);
+
+        if (response != null && response.Success)
+        {
+            var product = allProducts?.FirstOrDefault(p => p.Id == idProduct);
+            if (product != null) product.IsInOrder = false;
+
+            MsgService.ShowMessage("Product removed successfully!");
+        }
+        else
+        {
+            MsgService.ShowMessage(response?.Message ?? "Error removing product", isError: true);
+        }
     }
 }

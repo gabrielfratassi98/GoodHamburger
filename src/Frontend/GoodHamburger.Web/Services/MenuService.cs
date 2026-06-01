@@ -5,7 +5,7 @@ namespace GoodHamburger.Web.Services
 {
     public interface IMenuService
     {
-        Task<MenuData?> GetMenu();
+        Task<ApiResponse<MenuData>> GetMenu();
     }
 
     public class MenuService : IMenuService
@@ -14,10 +14,12 @@ namespace GoodHamburger.Web.Services
 
         public MenuService(HttpClient http) => _http = http;
 
-        public async Task<MenuData?> GetMenu()
+        public async Task<ApiResponse<MenuData>> GetMenu()
         {
-            var response = await _http.GetFromJsonAsync<MenuApiResponse>("menus");
-            return response?.Data?.FirstOrDefault();
+            var response = await _http.GetAsync("menus");
+            response.EnsureSuccessStatusCode();
+            var menu = await response.Content.ReadFromJsonAsync<ApiResponse<MenuData>>();
+            return menu;
         }
     }
 }

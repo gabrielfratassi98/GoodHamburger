@@ -26,22 +26,22 @@ namespace GoodHamburger.API.Controllers
             {
                 if (!ModelState.IsValid)
                 {
-                    return BadRequest(ApiResponse.Error("Required one or more products."));
+                    return BadRequest(ApiResponse<OrderResponse>.Error("Required one or more products."));
                 }
 
                 Result<Order> result = _orderAppService.Create(model.IdsProducts);
                 if (result.IsFailure)
                 {
-                    return BadRequest(ApiResponse.Error(result.Message));
+                    return BadRequest(ApiResponse<OrderResponse>.Error(result.Message));
                 }
 
                 OrderResponse response = OrderMap.ToResponseOrder(result.Value);
 
-                return Created(string.Empty, ApiResponse.Ok("Order created successfully.", response));
+                return Created(string.Empty, ApiResponse<OrderResponse>.Ok("Order created successfully.", response));
             }
             catch
             {
-                return StatusCode(500, ApiResponse.Error("An error occurred while adding the order."));
+                return StatusCode(500, ApiResponse<OrderResponse>.Error("An error occurred while adding the order."));
             }
         }
 
@@ -54,11 +54,11 @@ namespace GoodHamburger.API.Controllers
 
                 List<OrderResponse> response = OrderMap.ToResponseOrderList(orders);
 
-                return Ok(ApiResponse.Ok("Orders retrieved successfully.", response));
+                return Ok(ApiResponse<List<OrderResponse>>.Ok("Orders retrieved successfully.", response));
             }
             catch
             {
-                return StatusCode(500, ApiResponse.Error("An error occurred while retrieving the orders."));
+                return StatusCode(500, ApiResponse<List<OrderResponse>>.Error("An error occurred while retrieving the orders."));
             }
         }
 
@@ -70,16 +70,16 @@ namespace GoodHamburger.API.Controllers
                 Order order = _orderAppService.GetById(id);
                 if (order is not Order)
                 {
-                    return NotFound(ApiResponse.Error("Order not found.", new() ));
+                    return NotFound(ApiResponse<OrderResponse>.Error("Order not found.", new() ));
                 }
 
                 OrderResponse response = OrderMap.ToResponseOrder(order);
 
-                return Ok(ApiResponse.Ok("Order retrieved successfully.", response));
+                return Ok(ApiResponse<OrderResponse>.Ok("Order retrieved successfully.", response));
             }
             catch
             {
-                return StatusCode(500, ApiResponse.Error("An error occurred while retrieving the order."));
+                return StatusCode(500, ApiResponse<OrderResponse>.Error("An error occurred while retrieving the order."));
             }
         }
 
@@ -90,22 +90,22 @@ namespace GoodHamburger.API.Controllers
             {
                 if (!ModelState.IsValid)
                 {
-                    return BadRequest(ApiResponse.Error("Required one or more products."));
+                    return BadRequest(ApiResponse<OrderResponse>.Error("Required one or more products."));
                 }
 
                 Result<Order> result = _orderAppService.AddProducts(id, model.IdsProducts);
                 if (result.IsFailure)
                 {
-                    return BadRequest(ApiResponse.Error(result.Message));
+                    return BadRequest(ApiResponse<OrderResponse>.Error(result.Message));
                 }
 
                 OrderResponse response = OrderMap.ToResponseOrder(result.Value);
 
-                return Ok(ApiResponse.Ok("Product added successfully.", response));
+                return Ok(ApiResponse<OrderResponse>.Ok("Product added successfully.", response));
             }
             catch
             {
-                return StatusCode(500, ApiResponse.Error("An error occurred while adding the order."));
+                return StatusCode(500, ApiResponse<OrderResponse>.Error("An error occurred while adding the order."));
             }
         }
 
@@ -117,16 +117,16 @@ namespace GoodHamburger.API.Controllers
                 Result<Order> result = _orderAppService.DeleteProduct(id, idProduct);
                 if (result.IsFailure)
                 {
-                    return BadRequest(ApiResponse.Error(result.Message));
+                    return BadRequest(ApiResponse<OrderResponse>.Error(result.Message));
                 }
 
                 OrderResponse response = OrderMap.ToResponseOrder(result.Value);
 
-                return Ok(ApiResponse.Ok("Product deleted successfully.", response));
+                return Ok(ApiResponse<OrderResponse>.Ok("Product deleted successfully.", response));
             }
             catch
             {
-                return BadRequest(ApiResponse.Error("An error occurred while deleting the product from the order."));
+                return BadRequest(ApiResponse<OrderResponse>.Error("An error occurred while deleting the product from the order."));
             }
         }
 
@@ -138,14 +138,14 @@ namespace GoodHamburger.API.Controllers
                 Result result = _orderAppService.DeleteOrder(id);
                 if (result.IsFailure)
                 {
-                    return BadRequest(ApiResponse.Error(result.Message));
+                    return BadRequest(ApiResponse<OrderResponse>.Error(result.Message));
                 }
 
-                return Ok(ApiResponse.Ok("Order deleted successfully."));
+                return Ok(ApiResponse<OrderResponse>.Ok("Order deleted successfully."));
             }
             catch
             {
-                return BadRequest(ApiResponse.Error("An error occurred while deleting the order."));
+                return BadRequest(ApiResponse<OrderResponse>.Error("An error occurred while deleting the order."));
             }
         }
     }

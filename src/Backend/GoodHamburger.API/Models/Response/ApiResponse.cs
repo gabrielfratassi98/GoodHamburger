@@ -1,15 +1,15 @@
 ﻿namespace GoodHamburger.API.Models.Response
 {
-    public class ApiResponse
+    public class ApiResponse<T>
     {
         public bool Success { get; set; }
         public string Message { get; set; }
-        public object Data { get; set; } = new();
+        public T? Data { get; set; }
 
-        public static ApiResponse Ok(string message = "Success", object? data = null)
-            => new ApiResponse { Success = true, Message = message, Data = data ?? new() };
+        public static ApiResponse<T> Ok(string message = "Success", T? data = default)
+            => new ApiResponse<T> { Success = true, Message = message, Data = data };
 
-        public static ApiResponse Error(string message = "Failure", object? data = null)
-            => new ApiResponse { Success = false, Message = message, Data = data = new() };
+        public static ApiResponse<T> Error(string message = "Failure", T? data = default)
+            => new ApiResponse<T> { Success = false, Message = message, Data = data };
     }
 }
