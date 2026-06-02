@@ -17,6 +17,9 @@ As principais tecnologias e frameworks que adotei incluem:
 Desenhei a API para atender ao ciclo de vida completo dos pedidos e à consulta do cardápio. Os endpoints disponíveis são:
 * **Menu (Cardápio)**
     * `GET` Listar: Retorna todos os itens disponíveis no cardápio.
+    * `GET` Listar (Bebidas): Retorna todos os itens disponíveis de bebidas.
+    * `GET` Listar (Lanches): Retorna todos os itens disponíveis de lanches.
+    * `GET` Listar (Acompanhamentos): Retorna todos os itens disponíveis de acompanhamentos.
 * **Orders (Pedidos)**
     * `POST` Criar: Inicia um novo pedido a partir de uma lista de produtos.
     * `GET` Listar: Retorna o histórico de pedidos registrados.
@@ -77,6 +80,9 @@ The core technologies and frameworks I adopted include:
 I designed the API to cover the entire order lifecycle and menu consultation. The available endpoints are:
 * **Menu**
     * `GET` List: Returns all available menu items.
+    * `GET` List (Beverages): Returns all available beverage items.
+    * `GET` List (Sandwiches): Returns all available sandwich items.
+    * `GET` List (Side Dishes): Returns all available extras items.
 * **Orders**
     * `POST` Create: Initializes a new order from a product list.
     * `GET` List: Returns the history of registered orders.
