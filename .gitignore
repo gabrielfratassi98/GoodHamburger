@@ -416,5 +416,3 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
-/Source/Services/MestroOS.Identity.API/appsettings.json
-/Source/Services/MestroOS.Identity.API/appsettings.Development.json
