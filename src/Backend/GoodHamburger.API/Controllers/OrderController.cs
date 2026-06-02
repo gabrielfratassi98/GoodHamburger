@@ -70,7 +70,7 @@ namespace GoodHamburger.API.Controllers
                 Order order = await _orderAppService.GetById(id);
                 if (order == null)
                 {
-                    return NotFound(ApiResponse.Error("Order not found.");
+                    return NotFound(ApiResponse.Error("Order not found."));
                 }
 
                 OrderResponse response = OrderMap.ToResponseOrder(order);
