@@ -12,29 +12,29 @@ namespace GoodHamburger.Application.Services
             _repository = repository;
         }
 
-        public virtual void Add(TEntity entity)
+        public virtual async Task Add(TEntity entity)
         {
-            _repository.Add(entity);
+            await _repository.Add(entity);
         }
 
-        public virtual IEnumerable<TEntity> GetAll()
+        public virtual async Task<IEnumerable<TEntity>> GetAll()
         {
-            return _repository.GetAll();
+            return await _repository.GetAll();
         }
 
-        public virtual TEntity GetById(long id)
+        public virtual async Task<TEntity> GetById(long id)
         {
-            return _repository.GetById(id);
+            return await _repository.GetById(id);
         }
 
-        public virtual void Update(TEntity entity)
+        public virtual async Task Update(TEntity entity)
         {
-            _repository.Update(entity);
+            await _repository.Update(entity);
         }
 
-        public virtual void Delete(TEntity entity)
+        public virtual async Task Delete(TEntity entity)
         {
-            _repository.Delete(entity);
+            await _repository.Delete(entity);
         }
     }
 }

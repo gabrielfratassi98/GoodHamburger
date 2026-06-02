@@ -20,7 +20,7 @@ namespace GoodHamburger.API.Controllers
         }
 
         [HttpPost]
-        public ActionResult Create([FromBody] OrderRequest model)
+        public async Task<IActionResult> Create([FromBody] OrderRequest model)
         {
             try
             {
@@ -29,7 +29,7 @@ namespace GoodHamburger.API.Controllers
                     return BadRequest(ApiResponse<OrderResponse>.Error("Required one or more products."));
                 }
 
-                Result<Order> result = _orderAppService.Create(model.IdsProducts);
+                Result<Order> result = await _orderAppService.Create(model.IdsProducts);
                 if (result.IsFailure)
                 {
                     return BadRequest(ApiResponse<OrderResponse>.Error(result.Message));
@@ -46,11 +46,11 @@ namespace GoodHamburger.API.Controllers
         }
 
         [HttpGet]
-        public ActionResult GetAll()
+        public async Task<IActionResult> GetAll()
         {
             try
             {
-                IEnumerable<Order> orders = _orderAppService.GetAll();
+                IEnumerable<Order> orders = await _orderAppService.GetAll();
 
                 List<OrderResponse> response = OrderMap.ToResponseOrderList(orders);
 
@@ -63,11 +63,11 @@ namespace GoodHamburger.API.Controllers
         }
 
         [HttpGet("{id:int}")]
-        public ActionResult GetById(int id)
+        public async Task<IActionResult> GetById(int id)
         {
             try
             {
-                Order order = _orderAppService.GetById(id);
+                Order order = await _orderAppService.GetById(id);
                 if (order is not Order)
                 {
                     return NotFound(ApiResponse<OrderResponse>.Error("Order not found.", new() ));
@@ -84,7 +84,7 @@ namespace GoodHamburger.API.Controllers
         }
 
         [HttpPost("{id:long}/products")]
-        public ActionResult AddProduct(long id, [FromBody] OrderRequest model)
+        public async Task<IActionResult> AddProduct(long id, [FromBody] OrderRequest model)
         {
             try
             {
@@ -93,7 +93,7 @@ namespace GoodHamburger.API.Controllers
                     return BadRequest(ApiResponse<OrderResponse>.Error("Required one or more products."));
                 }
 
-                Result<Order> result = _orderAppService.AddProducts(id, model.IdsProducts);
+                Result<Order> result = await _orderAppService.AddProducts(id, model.IdsProducts);
                 if (result.IsFailure)
                 {
                     if (result.Message.Equals("Order not found."))
@@ -115,11 +115,11 @@ namespace GoodHamburger.API.Controllers
         }
 
         [HttpDelete("{id:long}/products/{idProduct:int}")]
-        public ActionResult DeleteProduct(long id, int idProduct)
+        public async Task<IActionResult> DeleteProduct(long id, int idProduct)
         {
             try
             {
-                Result<Order> result = _orderAppService.DeleteProduct(id, idProduct);
+                Result<Order> result = await _orderAppService.DeleteProduct(id, idProduct);
                 if (result.IsFailure)
                 {
                     if (result.Message.Equals("Order not found."))
@@ -141,11 +141,11 @@ namespace GoodHamburger.API.Controllers
         }
 
         [HttpDelete("{id:long}")]
-        public ActionResult Delete(long id)
+        public async Task<IActionResult> Delete(long id)
         {
             try
             {
-                Result result = _orderAppService.DeleteOrder(id);
+                Result result = await _orderAppService.DeleteOrder(id);
                 if (result.IsFailure)
                 {
                     if (result.Message.Equals("Order not found."))
@@ -161,6 +161,30 @@ namespace GoodHamburger.API.Controllers
             catch
             {
                 return StatusCode(500, ApiResponse<OrderResponse>.Error("An error occurred while deleting the order."));
+            }
+        }
+
+        [HttpDelete("{id:long}/finish")]
+        public async Task<IActionResult> FinishOrder(long id)
+        {
+            try
+            {
+                Result result = await _orderAppService.FinishOrder(id);
+                if (result.IsFailure)
+                {
+                    if (result.Message.Equals("Order not found."))
+                    {
+                        return NotFound(ApiResponse<OrderResponse>.Error(result.Message));
+                    }
+
+                    return BadRequest(ApiResponse<OrderResponse>.Error(result.Message));
+                }
+
+                return Ok(ApiResponse<OrderResponse>.Ok("Order saved successfully."));
+            }
+            catch
+            {
+                return StatusCode(500, ApiResponse<OrderResponse>.Error("An error occurred while saving the order."));
             }
         }
     }

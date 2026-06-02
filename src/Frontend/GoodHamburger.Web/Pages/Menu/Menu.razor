@@ -4,6 +4,7 @@
 @inject MessageService MsgService
 @inject IMenuService _menuService
 @inject IOrderService _orderService
+@inject NavigationManager NavigationManager
 
 <PageTitle>Menu</PageTitle>
 
@@ -16,6 +17,15 @@
         </Items>
     </RadzenSelectBar>
 </RadzenStack>
+
+@if (orderId > 0)
+{
+    <RadzenRow Gap="1rem" class="rz-p-4">
+        <RadzenColumn Size="3">
+            <RadzenButton Text="Go To Cart" ButtonStyle="ButtonStyle.Success" Size="ButtonSize.Large" Click="() => GoToCart()" Class="rz-w-100" />
+        </RadzenColumn>
+    </RadzenRow>
+}
 
 <RadzenRow Gap="1rem" class="rz-p-4">
     @foreach (var product in filteredProducts)
@@ -35,20 +45,10 @@
                     <RadzenText TextStyle="TextStyle.H6" class="rz-m-0">
                         $@product.Price.ToString("F2", System.Globalization.CultureInfo.InvariantCulture)
                     </RadzenText>
-                    @if (product.IsInOrder)
-                    {
-                        <RadzenButton Icon="delete"
-                                      ButtonStyle="ButtonStyle.Danger"
-                                      Click="@(() => DeleteProduct(product.Id))"
-                                      Text="Delete" />
-                    }
-                    else
-                    {
-                        <RadzenButton Icon="add_shopping_cart"
-                                      ButtonStyle="ButtonStyle.Primary"
-                                      Click="@(() => Buy(product.Id))"
-                                      Text="Buy" />
-                    }
+                    <RadzenButton Icon="add_shopping_cart"
+                                  ButtonStyle="ButtonStyle.Primary"
+                                  Click="@(() => AddToCart(product.Id))"
+                                  Text="Add To Cart" />
                 </RadzenStack>
             </RadzenCard>
         </RadzenColumn>
@@ -75,14 +75,6 @@
         orderId = order?.Id ?? 0;
 
         allProducts = menuModel.Data.Sandwiches.Concat(menuModel.Data.Extras).ToList();
-
-        if (order?.Products != null)
-        {
-            foreach (var product in allProducts)
-            {
-                product.IsInOrder = order.Products.Any(p => p.IdProduct == product.Id);
-            }
-        }
     }
 
     IEnumerable<Product> filteredProducts => categoriaSelecionada == "All"
@@ -91,7 +83,7 @@
         (categoriaSelecionada == "Sandwiches" && p.Category == 1) ||
         (categoriaSelecionada == "Extras" && (p.Category == 2 || p.Category == 3)));
 
-    async Task Buy(int idProduct)
+    async Task AddToCart(int idProduct)
     {
         var response = await _orderService.AddProductOrder(idProduct, orderId);
 
@@ -108,7 +100,6 @@
             orderId = order.Id;
         }
 
-        allProducts?.FirstOrDefault(p => p.Id == idProduct)?.IsInOrder = true;
         MsgService.ShowMessage(response.Message);
     }
 
@@ -122,9 +113,11 @@
             return;
         }
 
-        var product = allProducts?.FirstOrDefault(p => p.Id == idProduct);
-        if (product != null) product.IsInOrder = false;
-
         MsgService.ShowMessage(response.Message);
+    }
+
+    async Task GoToCart()
+    {
+        NavigationManager.NavigateTo("/cart");
     }
 }

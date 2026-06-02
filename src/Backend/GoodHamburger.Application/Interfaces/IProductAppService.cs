@@ -4,6 +4,6 @@ namespace GoodHamburger.Application.Interfaces
 {
     public interface IProductAppService
     {
-        IEnumerable<Product> GetProductsByCategory(int categoriaId);
+        Task<IEnumerable<Product>> GetProductsByCategory(int categoriaId);
     }
 }

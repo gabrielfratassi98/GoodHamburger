@@ -1,0 +1,87 @@
+﻿@page "/orders"
+@using Radzen
+@using Radzen.Blazor
+@inject MessageService MsgService
+@inject IOrderService _orderService
+
+<PageTitle>Orders</PageTitle>
+
+<RadzenRow Gap="1rem">
+    <RadzenColumn>
+        <RadzenCard>
+            <RadzenText TextStyle="TextStyle.H6">Orders</RadzenText>
+            @if (!orders.Any())
+            {
+                <p>No orders.</p>
+            }
+            else
+            {
+                <RadzenDataGrid Data="@orders" AllowSorting="true">
+                    <Columns>
+                        <RadzenDataGridColumn Title="Id" Property="Id" />
+
+                        <RadzenDataGridColumn Title="Amount" Property="Amount">
+                            <Template Context="item">
+                                @item.Amount.ToString("F2", System.Globalization.CultureInfo.InvariantCulture)
+                            </Template>
+                        </RadzenDataGridColumn>
+
+                        <RadzenDataGridColumn Title="Discount Percentage" Property="DiscountPercentage">
+                            <Template Context="item">
+                                @($"{item.DiscountPercentage}%")
+                            </Template>
+                        </RadzenDataGridColumn>
+
+                        <RadzenDataGridColumn Title="Discount" Property="Discount">
+                            <Template Context="item">
+                                @item.Discount.ToString("F2", System.Globalization.CultureInfo.InvariantCulture)
+                            </Template>
+                        </RadzenDataGridColumn>
+
+                        <RadzenDataGridColumn Title="Final Amount" Property="FinalAmount">
+                            <Template Context="item">
+                                @item.FinalAmount.ToString("F2", System.Globalization.CultureInfo.InvariantCulture)
+                            </Template>
+                        </RadzenDataGridColumn>
+
+                        <RadzenDataGridColumn Width="60px">
+                            <Template Context="item">
+                                <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Danger" Click="() => DeleteOrder(item.Id)" />
+                            </Template>
+                        </RadzenDataGridColumn>
+                    </Columns>
+                </RadzenDataGrid>
+            }
+        </RadzenCard>
+    </RadzenColumn>
+
+</RadzenRow>
+
+@code {
+    IEnumerable<OrderModel> orders = Enumerable.Empty<OrderModel>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetOrders();
+    }
+
+    async Task DeleteOrder(long id)
+    {
+        var result = await _orderService.Delete(id);
+
+        if (!result.Success)
+        {
+            MsgService.ShowMessage(result.Message, isError: true);
+            return;
+        }
+
+        await GetOrders();
+        MsgService.ShowMessage(result.Message);
+    }
+
+    private async Task GetOrders()
+    {
+        var result = await _orderService.GetAllOrders();
+        orders = result.Data?.Where(o => !o.Active) ?? Enumerable.Empty<OrderModel>();
+    }
+}

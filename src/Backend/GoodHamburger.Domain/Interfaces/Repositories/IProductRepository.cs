@@ -4,7 +4,7 @@ namespace GoodHamburger.Domain.Interfaces.Repositories
 {
     public interface IProductRepository : IRepositoryBase<Product>
     {
-        IEnumerable<Product> GetByIds(List<int> ids);
-        IEnumerable<Product> GetProductsByCategory(int category);
+        Task<IEnumerable<Product>> GetByIds(List<int> ids);
+        Task<IEnumerable<Product>> GetProductsByCategory(int category);
     }
 }

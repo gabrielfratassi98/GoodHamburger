@@ -70,10 +70,9 @@ namespace GoodHamburger.Domain.Entities
             return Result.Success();
         }
 
-        public Result DeleteOrder()
+        public void InactivateOrder()
         {
             Active = false;
-            return Result.Success("Order deleted successfully.");
         }
 
         public void CalculateOrderAmount()

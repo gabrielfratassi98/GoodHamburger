@@ -13,9 +13,9 @@ namespace GoodHamburger.Application.Services
             _productRepository = productRepository;
         }
 
-        public IEnumerable<Product> GetProductsByCategory(int category)
+        public async Task<IEnumerable<Product>> GetProductsByCategory(int category)
         {
-            return _productRepository.GetProductsByCategory(category);
+            return await _productRepository.GetProductsByCategory(category);
         }
     }
 }

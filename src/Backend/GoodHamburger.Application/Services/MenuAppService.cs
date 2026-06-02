@@ -13,9 +13,9 @@ namespace GoodHamburger.Application.Services
             _productRepository = productRepository;
         }
 
-        public Menu GetMenu()
+        public async Task<Menu> GetMenu()
         {
-            IEnumerable<Product> products = _productRepository.GetAll();
+            IEnumerable<Product> products = await _productRepository.GetAll();
             if (!products.Any())
             {
                 return new Menu(new List<Product>());

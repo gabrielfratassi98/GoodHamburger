@@ -1,19 +1,20 @@
-﻿@page "/order"
+﻿@page "/cart"
 @using Radzen
 @using Radzen.Blazor
 @inject MessageService MsgService
 @inject IOrderService _orderService
+@inject NavigationManager Navigation
 
-<PageTitle>Your Order</PageTitle>
+<PageTitle>Cart</PageTitle>
 
 <RadzenRow Gap="1rem">
     <RadzenColumn Size="12" SizeMD="8">
         <RadzenCard>
-            <RadzenText TextStyle="TextStyle.H6">Order Products</RadzenText>
+            <RadzenText TextStyle="TextStyle.H6">Cart</RadzenText>
 
             @if (order.Products == null || !order.Products.Any())
             {
-                <p>No products in the order.</p>
+                <p>No products in the cart.</p>
             }
             else
             {
@@ -76,7 +77,7 @@
     protected override async Task OnInitializedAsync()
     {
         var result = await _orderService.GetAllOrders();
-        order = result?.Data?.FirstOrDefault(o => o.Active) ?? new OrderModel { Products = new List<OrderProduct>() };
+        order = result?.Data?.FirstOrDefault(o => o.Active) ?? new OrderModel();
         orderId = order.Id;
     }
 
@@ -109,5 +110,6 @@
 
         order = new();
         MsgService.ShowMessage("Checkout.");
+        Navigation.NavigateTo("/orders");
     }
 }

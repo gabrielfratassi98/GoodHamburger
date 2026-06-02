@@ -13,24 +13,24 @@ namespace GoodHamburger.Infrastructure.Repositories
             _dbContext = dbContext;
         }
 
-        public override Product GetById(long id)
+        public override async Task<Product> GetById(long id)
         {
-            return _dbContext.Product.Find((int)id);
+            return await _dbContext.Product.FindAsync((int)id);
         }
 
-        public override IEnumerable<Product> GetAll()
+        public override async Task<IEnumerable<Product>> GetAll()
         {
-            return _dbContext.Product.ToList();
+            return await Task.FromResult(_dbContext.Product.ToList());
         }
 
-        public IEnumerable<Product> GetByIds(List<int> ids)
+        public async Task<IEnumerable<Product>> GetByIds(List<int> ids)
         {
-            return _dbContext.Product.Where(p => ids.Contains(p.Id)).ToList();
+            return await Task.FromResult(_dbContext.Product.Where(p => ids.Contains(p.Id)).ToList());
         }     
 
-        public IEnumerable<Product> GetProductsByCategory(int category)
+        public async Task<IEnumerable<Product>> GetProductsByCategory(int category)
         {
-            return _dbContext.Product.Where(p => p.Category == category).ToList();
+            return await Task.FromResult(_dbContext.Product.Where(p => p.Category == category).ToList());
         }
     }
 }

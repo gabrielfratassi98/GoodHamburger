@@ -18,14 +18,14 @@ namespace GoodHamburger.Application.Services
             _productRepository = productRepository;
         }
 
-        public Result<Order> Create(List<int> idsProducts)
+        public async Task<Result<Order>> Create(List<int> idsProducts)
         {
             if (idsProducts == null || !idsProducts.Any())
             {
                 return Result<Order>.Failure("The product list cannot be empty.");
             }
 
-            var productsResult = GetValidProductsFromDb(idsProducts);
+            var productsResult = await GetValidProductsFromDb(idsProducts);
             if (productsResult.IsFailure)
             {
                 return Result<Order>.Failure(productsResult.Message);
@@ -39,25 +39,25 @@ namespace GoodHamburger.Application.Services
                 return Result<Order>.Failure(addResult.Message);
             }
 
-            Add(order);
+            await Add(order);
 
             return Result<Order>.Success(order);
         }
 
-        public Result<Order> AddProducts(long id, List<int> idsProducts)
+        public async Task<Result<Order>> AddProducts(long id, List<int> idsProducts)
         {
             if (idsProducts == null || !idsProducts.Any())
             {
                 return Result<Order>.Failure("The product list cannot be empty.");
             }
 
-            var productsResult = GetValidProductsFromDb(idsProducts);
+            var productsResult = await GetValidProductsFromDb(idsProducts);
             if (productsResult.IsFailure)
             {
                 return Result<Order>.Failure(productsResult.Message);
             }
 
-            var order = GetById(id);
+            var order = await GetById(id);
             if (order is null)
             {
                 return Result<Order>.Failure("Order not found.");
@@ -69,14 +69,14 @@ namespace GoodHamburger.Application.Services
                 return Result<Order>.Failure(result.Message);
             }
 
-            Update(order);
+            await Update(order);
 
             return Result<Order>.Success(order);
         }
 
-        public Result<Order> DeleteProduct(long id, int idProduct)
+        public async Task<Result<Order>> DeleteProduct(long id, int idProduct)
         {
-            var order = GetById(id);
+            var order = await GetById(id);
             if (order is null)
             {
                 return Result<Order>.Failure("Order not found.");
@@ -88,36 +88,54 @@ namespace GoodHamburger.Application.Services
                 return Result<Order>.Failure(result.Message);
             }
 
-            Update(order);
+            await Update(order);
 
             return Result<Order>.Success(order);
         }
 
-        public Result DeleteOrder(long id)
+        public async Task<Result<Order>> FinishOrder(long id)
         {
-            var order = GetById(id);
+            var order = await GetById(id);
             if (order is null)
             {
-                return Result.Failure("Order not found.");
+                return Result<Order>.Failure("Order not found.");
             }
 
-            order.DeleteOrder();
+            order.InactivateOrder();
+            await Update(order);
 
-            Update(order);
-
-            return Result.Success();
+            return Result<Order>.Success(order);
         }
 
-        private Result<List<Product>> GetValidProductsFromDb(List<int> idsProducts)
+        public async Task<Result> DeleteOrder(long id)
         {
-            var productsDb = idsProducts.Select(id => _productRepository.GetById(id)).ToList();
-
-            if (productsDb.Any(product => product is null))
+            var order = await GetById(id);
+            if (order is null)
             {
-                return Result<List<Product>>.Failure("One or more products not found.");
+                return Result<Order>.Failure("Order not found.");
             }
 
-            return Result<List<Product>>.Success(productsDb);
+            await Delete(order);
+
+            return Result.Success("Order deleted successfully.");
+        }
+
+        private async Task<Result<List<Product>>> GetValidProductsFromDb(List<int> idsProducts)
+        {
+            var products = new List<Product>();
+
+            foreach (var id in idsProducts)
+            {
+                Product product = await _productRepository.GetById(id); 
+                if (product is null)
+                {
+                    return Result<List<Product>>.Failure("One or more products not found.");
+                }
+
+                products.Add(product);
+            }
+
+            return Result<List<Product>>.Success(products);
         }
     }
 }

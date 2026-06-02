@@ -4,6 +4,6 @@ namespace GoodHamburger.Application.Interfaces
 {
     public interface IMenuAppService
     {
-        public Menu GetMenu();
+        Task<Menu> GetMenu();
     }
 }

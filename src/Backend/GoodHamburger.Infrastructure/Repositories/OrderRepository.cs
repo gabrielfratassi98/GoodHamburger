@@ -14,30 +14,36 @@ namespace GoodHamburger.Infrastructure.Repositories
             _dbContext = dbContext;
         }
 
-        public override void Add(Order entity)
+        public override async Task Add(Order entity)
         {
             _dbContext.Add(entity);
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
         }
 
-        public override void Update(Order entity)
+        public override async Task Update(Order entity)
         {
             _dbContext.Update(entity);
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
         }
 
-        public override Order GetById(long id)
+        public override async Task<Order> GetById(long id)
         {
-            return _dbContext.Order
+            return await _dbContext.Order
                 .Include(o => o.Products)
-                .FirstOrDefault(o => o.Id == id);
+                .FirstOrDefaultAsync(o => o.Id == id);
         }
 
-        public override IEnumerable<Order> GetAll()
+        public override async Task<IEnumerable<Order>> GetAll()
         {
-            return _dbContext.Order
+            return await _dbContext.Order
                 .Include(o => o.Products)
-                .ToList();
+                .ToListAsync();
+        }
+
+        public override async Task Delete(Order entity)
+        {
+            _dbContext.Remove(entity);
+            await _dbContext.SaveChangesAsync();
         }
     }
 }

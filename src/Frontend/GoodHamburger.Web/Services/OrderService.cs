@@ -9,9 +9,10 @@ namespace GoodHamburger.Web.Services
     {
         Task<ApiResponse<List<OrderModel>>> GetAllOrders();
         Task<ApiResponse<OrderModel>> GetOrder(long id);
-        Task<ApiResponse<OrderModel>> FinishOrder(long id);
+        Task<ApiResponse> FinishOrder(long id);
         Task<ApiResponse<OrderModel>> DeleteProductOrder(int idProduct, long id);
         Task<ApiResponse<OrderModel>> AddProductOrder(int idProduct, long id);
+        Task<ApiResponse<OrderModel>> Delete(long id);
     }
 
     public class OrderService : IOrderService
@@ -36,10 +37,10 @@ namespace GoodHamburger.Web.Services
             return order;
         }
 
-        public async Task<ApiResponse<OrderModel>> FinishOrder(long id)
+        public async Task<ApiResponse> FinishOrder(long id)
         {
-            var response = await _http.DeleteAsync($"orders/{id}");
-            return await response.Content.ReadFromJsonAsync<ApiResponse<OrderModel>>();
+            var response = await _http.DeleteAsync($"orders/{id}/finish");
+            return await response.Content.ReadFromJsonAsync<ApiResponse>();
         }
 
         public async Task<ApiResponse<OrderModel>> DeleteProductOrder(int idProduct, long id)
@@ -64,6 +65,12 @@ namespace GoodHamburger.Web.Services
                 response = await _http.PostAsJsonAsync($"orders/{id}/products", payload);
             }
 
+            return await response.Content.ReadFromJsonAsync<ApiResponse<OrderModel>>();
+        }
+
+        public async Task<ApiResponse<OrderModel>> Delete(long id)
+        {
+            var response = await _http.DeleteAsync($"orders/{id}");
             return await response.Content.ReadFromJsonAsync<ApiResponse<OrderModel>>();
         }
     }

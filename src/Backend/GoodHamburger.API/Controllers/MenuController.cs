@@ -20,11 +20,11 @@ namespace GoodHamburger.API.Controllers
         }
 
         [HttpGet]
-        public ActionResult GetAll()
+        public async Task<IActionResult> GetAll()
         {
             try
             {
-                Menu menu = _menuAppService.GetMenu();
+                Menu menu = await _menuAppService.GetMenu();
                 MenuResponse response = menu.ToResponseMenu();
 
                 return Ok(ApiResponse<MenuResponse>.Ok("Menu retrieved successfully.", response));
@@ -36,11 +36,11 @@ namespace GoodHamburger.API.Controllers
         }
 
         [HttpGet("sandwiches")]
-        public ActionResult GetSandwiches()
+        public async Task<IActionResult> GetSandwiches()
         {
             try
             {
-                IEnumerable<ProductResponse> response = GetProductsByCategory((int)CategoryProduct.Sandwich);
+                IEnumerable<ProductResponse> response = await GetProductsByCategory((int)CategoryProduct.Sandwich);
 
                 return Ok(ApiResponse<IEnumerable<ProductResponse>>.Ok("Sandwiches retrieved successfully.", response));
             }
@@ -51,11 +51,11 @@ namespace GoodHamburger.API.Controllers
         }
 
         [HttpGet("fries")]
-        public ActionResult GetExtras()
+        public async Task<IActionResult> GetExtras()
         {
             try
             {
-                IEnumerable<ProductResponse> response = GetProductsByCategory((int)CategoryProduct.Fries);
+                IEnumerable<ProductResponse> response = await GetProductsByCategory((int)CategoryProduct.Fries);
 
                 return Ok(ApiResponse<IEnumerable<ProductResponse>>.Ok("Fries retrieved successfully.", response));
             }
@@ -66,11 +66,11 @@ namespace GoodHamburger.API.Controllers
         }
 
         [HttpGet("sodas")]
-        public ActionResult GetSodas()
+        public async Task<IActionResult> GetSodas()
         {
             try
             {
-                IEnumerable<ProductResponse> response = GetProductsByCategory((int)CategoryProduct.Soda);
+                IEnumerable<ProductResponse> response = await GetProductsByCategory((int)CategoryProduct.Soda);
 
                 return Ok(ApiResponse<IEnumerable<ProductResponse>>.Ok("Sodas retrieved successfully.", response));
             }
@@ -80,9 +80,9 @@ namespace GoodHamburger.API.Controllers
             }
         }
 
-        private IEnumerable<ProductResponse> GetProductsByCategory(int category)
+        private async Task<IEnumerable<ProductResponse>> GetProductsByCategory(int category)
         {
-            IEnumerable<Product> products = _productAppService.GetProductsByCategory(category);
+            IEnumerable<Product> products = await _productAppService.GetProductsByCategory(category);
             return products.ToResponseProductList();
         }
     }

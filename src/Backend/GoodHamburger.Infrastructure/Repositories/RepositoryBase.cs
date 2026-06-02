@@ -4,27 +4,27 @@ namespace GoodHamburger.Infrastructure.Repositories
 {
     public class RepositoryBase<TEntity> : IRepositoryBase<TEntity> where TEntity : class
     {
-        public virtual void Add(TEntity entity)
+        public virtual async Task Add(TEntity entity)
         {
             throw new NotImplementedException();
         }
 
-        public virtual IEnumerable<TEntity> GetAll()
+        public virtual async Task<IEnumerable<TEntity>> GetAll()
         {
             throw new NotImplementedException();
         }
 
-        public virtual TEntity GetById(long id)
+        public virtual async Task<TEntity> GetById(long id)
         {
             throw new NotImplementedException();
         }
 
-        public virtual void Update(TEntity entity)
+        public virtual async Task Update(TEntity entity)
         {
             throw new NotImplementedException();
         }
 
-        public virtual void Delete(TEntity entity)
+        public virtual async Task Delete(TEntity entity)
         {
             throw new NotImplementedException();
         }
