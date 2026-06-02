@@ -25,7 +25,7 @@ namespace GoodHamburger.Application.Services
                 return Result<Order>.Failure("The product list cannot be empty.");
             }
 
-            var productsResult = await GetValidProductsFromDb(idsProducts);
+            Result<List<Product>> productsResult = await GetValidProductsFromDb(idsProducts);
             if (productsResult.IsFailure)
             {
                 return Result<Order>.Failure(productsResult.Message);
@@ -51,13 +51,13 @@ namespace GoodHamburger.Application.Services
                 return Result<Order>.Failure("The product list cannot be empty.");
             }
 
-            var productsResult = await GetValidProductsFromDb(idsProducts);
+            Result<List<Product>> productsResult = await GetValidProductsFromDb(idsProducts);
             if (productsResult.IsFailure)
             {
                 return Result<Order>.Failure(productsResult.Message);
             }
 
-            var order = await GetById(id);
+            Order order = await GetById(id);
             if (order is null)
             {
                 return Result<Order>.Failure("Order not found.");
@@ -76,7 +76,7 @@ namespace GoodHamburger.Application.Services
 
         public async Task<Result<Order>> DeleteProduct(long id, int idProduct)
         {
-            var order = await GetById(id);
+            Order order = await GetById(id);
             if (order is null)
             {
                 return Result<Order>.Failure("Order not found.");
@@ -95,7 +95,7 @@ namespace GoodHamburger.Application.Services
 
         public async Task<Result<Order>> FinishOrder(long id)
         {
-            var order = await GetById(id);
+            Order order = await GetById(id);
             if (order is null)
             {
                 return Result<Order>.Failure("Order not found.");
@@ -109,7 +109,7 @@ namespace GoodHamburger.Application.Services
 
         public async Task<Result> DeleteOrder(long id)
         {
-            var order = await GetById(id);
+            Order order = await GetById(id);
             if (order is null)
             {
                 return Result<Order>.Failure("Order not found.");

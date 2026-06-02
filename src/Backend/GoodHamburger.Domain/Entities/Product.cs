@@ -11,7 +11,7 @@
             Category = (int)category;
             Description = description;
             ImageUrl = img;
-            SetSide();
+            SetExtra();
         }
 
         public string Name { get; private set; } = string.Empty;
@@ -21,7 +21,7 @@
         public int Category { get; private set; }
         public bool Extra { get; private set; }
 
-        private void SetSide()
+        private void SetExtra()
         {
             Extra = Category == (int)CategoryProduct.Fries || Category == (int)CategoryProduct.Soda;
         }

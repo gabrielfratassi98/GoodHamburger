@@ -68,9 +68,10 @@
 
     async Task InitMenu()
     {
-        var menuModel = await _menuService.GetMenu();
-        var orders = await _orderService.GetAllOrders();
-        var order = orders?.Data?.FirstOrDefault(o => o.Active) ?? new OrderModel();
+        ApiResponse<MenuData> menuModel = await _menuService.GetMenu();
+        ApiResponse<IEnumerable<OrderModel>> orders = await _orderService.GetAllOrders();
+        
+        OrderModel order = orders?.Data?.FirstOrDefault(o => o.Active) ?? new OrderModel();
 
         orderId = order?.Id ?? 0;
 
@@ -85,7 +86,7 @@
 
     async Task AddToCart(int idProduct)
     {
-        var response = await _orderService.AddProductOrder(idProduct, orderId);
+        ApiResponse<OrderModel> response = await _orderService.AddProductOrder(idProduct, orderId);
 
         if (response == null || !response.Success)
         {
@@ -93,7 +94,7 @@
             return;
         }
 
-        var order = response.Data;
+        OrderModel order = response.Data;
 
         if (order != null)
         {
@@ -105,7 +106,7 @@
 
     async Task DeleteProduct(int idProduct)
     {
-        var response = await _orderService.DeleteProductOrder(idProduct, orderId);
+        ApiResponse<OrderModel> response = await _orderService.DeleteProductOrder(idProduct, orderId);
 
         if (!response.Success)
         {

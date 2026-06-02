@@ -68,9 +68,9 @@ namespace GoodHamburger.API.Controllers
             try
             {
                 Order order = await _orderAppService.GetById(id);
-                if (order is not Order)
+                if (order == null)
                 {
-                    return NotFound(ApiResponse<OrderResponse>.Error("Order not found.", new() ));
+                    return NotFound(ApiResponse.Error("Order not found.");
                 }
 
                 OrderResponse response = OrderMap.ToResponseOrder(order);
@@ -180,7 +180,7 @@ namespace GoodHamburger.API.Controllers
                     return BadRequest(ApiResponse<OrderResponse>.Error(result.Message));
                 }
 
-                return Ok(ApiResponse<OrderResponse>.Ok("Order saved successfully."));
+                return Ok(ApiResponse<OrderResponse>.Ok("Order finished successfully."));
             }
             catch
             {

@@ -16,9 +16,11 @@ namespace GoodHamburger.Web.Services
 
         public async Task<ApiResponse<MenuData>> GetMenu()
         {
-            var response = await _http.GetAsync("menus");
+            HttpResponseMessage response = await _http.GetAsync("menus");
             response.EnsureSuccessStatusCode();
-            var menu = await response.Content.ReadFromJsonAsync<ApiResponse<MenuData>>();
+            
+            ApiResponse<MenuData> menu = await response.Content.ReadFromJsonAsync<ApiResponse<MenuData>>();
+            
             return menu;
         }
     }

@@ -67,7 +67,7 @@
 
     async Task DeleteOrder(long id)
     {
-        var result = await _orderService.Delete(id);
+        ApiResponse<OrderModel> result = await _orderService.Delete(id);
 
         if (!result.Success)
         {
@@ -81,7 +81,7 @@
 
     private async Task GetOrders()
     {
-        var result = await _orderService.GetAllOrders();
+        ApiResponse<IEnumerable<OrderModel>> result = await _orderService.GetAllOrders();
         orders = result.Data?.Where(o => !o.Active) ?? Enumerable.Empty<OrderModel>();
     }
 }

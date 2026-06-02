@@ -7,7 +7,7 @@ namespace GoodHamburger.Web.Services
 {
     public interface IOrderService
     {
-        Task<ApiResponse<List<OrderModel>>> GetAllOrders();
+        Task<ApiResponse<IEnumerable<OrderModel>>> GetAllOrders();
         Task<ApiResponse<OrderModel>> GetOrder(long id);
         Task<ApiResponse> FinishOrder(long id);
         Task<ApiResponse<OrderModel>> DeleteProductOrder(int idProduct, long id);
@@ -21,31 +21,31 @@ namespace GoodHamburger.Web.Services
 
         public OrderService(HttpClient http) => _http = http;
 
-        public async Task<ApiResponse<List<OrderModel>>> GetAllOrders()
+        public async Task<ApiResponse<IEnumerable<OrderModel>>> GetAllOrders()
         {
-            var response = await _http.GetAsync($"orders");
+            HttpResponseMessage response = await _http.GetAsync($"orders");
 
-            return await response.Content.ReadFromJsonAsync<ApiResponse<List<OrderModel>>>();
+            return await response.Content.ReadFromJsonAsync<ApiResponse<IEnumerable<OrderModel>>>();
         }
 
         public async Task<ApiResponse<OrderModel>> GetOrder(long id)
         {
-            var response = await _http.GetAsync($"orders/{id}");
+            HttpResponseMessage response = await _http.GetAsync($"orders/{id}");
 
-            var order = await response.Content.ReadFromJsonAsync<ApiResponse<OrderModel>>();
+            ApiResponse<OrderModel> order = await response.Content.ReadFromJsonAsync<ApiResponse<OrderModel>>();
 
             return order;
         }
 
         public async Task<ApiResponse> FinishOrder(long id)
         {
-            var response = await _http.DeleteAsync($"orders/{id}/finish");
+            HttpResponseMessage response = await _http.DeleteAsync($"orders/{id}/finish");
             return await response.Content.ReadFromJsonAsync<ApiResponse>();
         }
 
         public async Task<ApiResponse<OrderModel>> DeleteProductOrder(int idProduct, long id)
         {
-            var response = await _http.DeleteAsync($"orders/{id}/products/{idProduct}");
+            HttpResponseMessage response = await _http.DeleteAsync($"orders/{id}/products/{idProduct}");
 
             return await response.Content.ReadFromJsonAsync<ApiResponse<OrderModel>>();
         }
@@ -70,7 +70,7 @@ namespace GoodHamburger.Web.Services
 
         public async Task<ApiResponse<OrderModel>> Delete(long id)
         {
-            var response = await _http.DeleteAsync($"orders/{id}");
+            HttpResponseMessage response = await _http.DeleteAsync($"orders/{id}");
             return await response.Content.ReadFromJsonAsync<ApiResponse<OrderModel>>();
         }
     }
