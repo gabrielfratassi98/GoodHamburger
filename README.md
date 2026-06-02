@@ -82,7 +82,7 @@ I designed the API to cover the entire order lifecycle and menu consultation. Th
     * `GET` List: Returns all available menu items.
     * `GET` List (Beverages): Returns all available beverage items.
     * `GET` List (Sandwiches): Returns all available sandwich items.
-    * `GET` List (Side Dishes): Returns all available extras items.
+    * `GET` List (Extras): Returns all available extras items.
 * **Orders**
     * `POST` Create: Initializes a new order from a product list.
     * `GET` List: Returns the history of registered orders.
